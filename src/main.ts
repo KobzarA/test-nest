@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,11 +10,20 @@ async function bootstrap() {
     .setTitle('Test Nest.JS')
     .setDescription('Test Nest.JS API description')
     .setVersion('1.0')
-    .addTag('nest')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  app.useGlobalPipes(new ValidationPipe());
+
   await app.listen(3000);
+
+  console.info(
+    '\n',
+    `You can look docks in Swagger on: ${await app.getUrl()}/api`,
+    '\n\n',
+    `Application is running on: ${await app.getUrl()}`,
+  );
 }
 bootstrap();
