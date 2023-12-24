@@ -6,15 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { BookingObjectsService } from './booking-objects.service';
 import { CreateBookingObjectDto } from './dto/create-booking-object.dto';
 import { UpdateBookingObjectDto } from './dto/update-booking-object.dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Booking objects')
 @Controller('booking-objects')
 export class BookingObjectsController {
   constructor(private readonly bookingObjectsService: BookingObjectsService) {}
 
+  @ApiBody({
+    type: CreateBookingObjectDto,
+    description:
+      'To create object you should choose one of this objectTypes: hotelRoom, car, apartment',
+  })
   @Post()
   create(@Body() createBookingObjectDto: CreateBookingObjectDto) {
     return this.bookingObjectsService.create(createBookingObjectDto);
@@ -39,7 +48,8 @@ export class BookingObjectsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @HttpCode(204)
+  remove(@Param('id', new ParseIntPipe()) id: string) {
     return this.bookingObjectsService.remove(+id);
   }
 }

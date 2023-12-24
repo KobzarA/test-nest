@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+import { BookingObject } from './entities/booking-object.entity';
 import { CreateBookingObjectDto } from './dto/create-booking-object.dto';
 import { UpdateBookingObjectDto } from './dto/update-booking-object.dto';
 
 @Injectable()
 export class BookingObjectsService {
+  constructor(
+    @InjectModel(BookingObject)
+    private bookingModel: typeof BookingObject,
+  ) {}
   create(createBookingObjectDto: CreateBookingObjectDto) {
-    return 'This action adds a new bookingObject';
+    return this.bookingModel.create({ ...createBookingObjectDto });
   }
 
-  findAll() {
-    return `This action returns all bookingObjects`;
+  async findAll(): Promise<BookingObject[]> {
+    return this.bookingModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bookingObject`;
+  async findOne(id: number) {
+    const object = await this.bookingModel.findOne({
+      where: {
+        id,
+      },
+    });
+    if (object === null) {
+      throw new NotFoundException('Object doesn`t exist');
+    } else {
+      return object;
+    }
   }
 
-  update(id: number, updateBookingObjectDto: UpdateBookingObjectDto) {
-    return `This action updates a #${id} bookingObject`;
+  async update(id: number, updateBookingObjectDto: UpdateBookingObjectDto) {
+    const object = await this.findOne(id);
+    object.update({ ...updateBookingObjectDto });
+
+    return object;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bookingObject`;
+  async remove(id: number): Promise<void> {
+    const object = await this.findOne(id);
+    await object.destroy();
   }
 }
