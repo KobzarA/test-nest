@@ -14,7 +14,7 @@ export class BookingObjectsService {
     return this.bookingModel.create({ ...createBookingObjectDto });
   }
 
-  async findAll(): Promise<BookingObject[]> {
+  async findAll() {
     return this.bookingModel.findAll();
   }
 
