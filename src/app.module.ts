@@ -5,13 +5,15 @@ import { AppService } from './app.service';
 import { BookingObjectsModule } from './booking-objects/booking-objects.module';
 import { OrdersModule } from './orders/orders.module';
 import { SequelizeModule } from '@nestjs/sequelize';
-// import { BookingObject } from './booking-objects/entities/booking-object.entity';
+import { RestowavesModule } from './restowaves/restowaves.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.PG_HOST,
@@ -31,6 +33,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
     }),
     BookingObjectsModule,
     OrdersModule,
+    RestowavesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
